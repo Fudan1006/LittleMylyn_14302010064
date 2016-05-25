@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Sample Category"
+            id="LittleMyLyn">
+      </category>
+      <view
+            name="Little MyLyn"
+            icon="icons/sample.gif"
+            category="LittleMyLyn"
+            class="littlemylyn.views.SampleView"
+            id="littlemylyn.views.SampleView">
+      </view>
+   </extension>
+   <!--trying many extention points
+
+<extension  
+  point="org.eclipse.ui.navigator.navigatorContent">
+ <navigatorContent
+            name="mylyn nav"
+            priority="high"
+            icon="icons/sample.gif"
+            activeByDefault="true"
+            contentProvider="littlemylyn.views.ProjectViewr"
+            labelProvider="org.eclipse.ui.navigator.resources.internal.workbench.ResourceExtensionLabelProvider"   
+            sorter="org.eclipse.ui.navigator.resources.internal.workbench.ResourceSorter"
+            id="org.eclipse.ui.navigator.resourceContent">         
+  <triggerPoints>
+           <or>         
+              <instanceof 
+                    value="org.eclipse.core.resources.IWorkspaceRoot" /> 
+              <instanceof
+                    value="org.eclipse.core.resources.IProject" />  
+              <instanceof  
+                     value="org.eclipse.core.resources.IFolder" /> 
+           </or>
+  </triggerPoints>
+        <possibleChildren>
+           <or>         
+              <instanceof 
+                    value="org.eclipse.core.resources.IWorkspaceRoot" /> 
+              <instanceof
+                    value="org.eclipse.core.resources.IProject" /> 
+              <instanceof 
+                     value="org.eclipse.core.resources.IResource" /> 
+              <instanceof  
+                     value="org.eclipse.core.resources.IFolder" />
+              <instanceof 
+                     value="org.eclipse.core.resources.IFile" /> 
+         </or>
+     </possibleChildren>
+ </navigatorContent>
+</extension>
+-->
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.views.ProblemView"
+               relationship="right"
+               id="littlemylyn.views.SampleView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+
+</plugin>
