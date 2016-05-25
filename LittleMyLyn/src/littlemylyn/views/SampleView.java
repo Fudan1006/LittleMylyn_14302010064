@@ -249,7 +249,7 @@ public class SampleView extends ViewPart {
 	private Action action1;
 	private Action action2;
 	private Node root;
-	private TreeViewer tv;
+	private static TreeViewer tv;
 
 	public class TVContentProvider implements ITreeContentProvider {
 		@Override
@@ -345,6 +345,11 @@ public class SampleView extends ViewPart {
 		makeActions();
 		hookContextMenu();
 		contributeToActionBars();
+	}
+	
+	public static void repaint(Node root) {
+		tv.setInput(root);
+		tv.refresh();
 	}
 
 	private void hookContextMenu() {

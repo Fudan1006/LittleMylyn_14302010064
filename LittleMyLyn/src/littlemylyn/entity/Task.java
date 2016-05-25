@@ -10,7 +10,7 @@ public class Task extends Node{
 	//public static String[] categories = {"debug", "new feature", "refactor"}; 
 	public Node relatedClass = new Node();
 	
-	Task(String n, String s, String c) {
+	public Task(String n, String s, String c) {
 		name.setName(n);
 		state.setName(s);
 		category.setName(c);
