@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Display;
 
 import littlemylyn.entity.Task;
 import littlemylyn.entity.TaskList;
+import littlemylyn.sql.AddTask;
 
 public class NewTaskFrame extends JFrame {
 	private String[] category = {"debug", "new feature", "refactor"};
@@ -54,6 +55,7 @@ public class NewTaskFrame extends JFrame {
 				String state = states[jcbState.getSelectedIndex()];
 				Task task = new Task(name, state, cate);
 				TaskList.getTaskList().addChild(task.name);	
+				AddTask.add(task);
 				Display.getDefault().syncExec(new Runnable() {
 				    public void run() {
 				    	SampleView.tv.setInput(TaskList.getTaskList());
