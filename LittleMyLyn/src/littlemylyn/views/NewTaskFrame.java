@@ -55,7 +55,7 @@ public class NewTaskFrame extends JFrame {
 				String state = states[jcbState.getSelectedIndex()];
 				Task task = new Task(name, state, cate);
 				TaskList.getTaskList().addChild(task.name);	
-				AddTask.add(task);
+				//AddTask.add(task);
 				Display.getDefault().syncExec(new Runnable() {
 				    public void run() {
 				    	SampleView.tv.setInput(TaskList.getTaskList());

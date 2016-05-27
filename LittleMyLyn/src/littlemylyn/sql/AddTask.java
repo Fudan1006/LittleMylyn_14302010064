@@ -11,13 +11,13 @@ import littlemylyn.entity.Task;
 
 public class AddTask {  
     public static void add(Task task) { 
-    	try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-        	e.printStackTrace();
-        }
+//    	try {
+//            Class.forName("com.mysql.jdbc.Driver");
+//        } catch (ClassNotFoundException e) {
+//        	e.printStackTrace();
+//        }
     	
-    	String url = "jdbc:mysql://127.0.0.1/LittleMyLyn";  
+    	String url = "jdbc:mysql://localhost:3306/LittleMyLyn";  
         String user = "root";  
         String password = "270329zuki";
         Connection con;   
