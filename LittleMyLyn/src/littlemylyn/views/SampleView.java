@@ -349,7 +349,7 @@ public class SampleView extends ViewPart {
 	
 	public static void repaint(Node root) {
 		tv.setInput(root);
-		tv.refresh();
+		//tv.refresh();
 	}
 
 	private void hookContextMenu() {

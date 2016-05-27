@@ -11,18 +11,20 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.eclipse.swt.widgets.Display;
+
 import littlemylyn.entity.Task;
 import littlemylyn.entity.TaskList;
 
 public class NewTaskFrame extends JFrame {
 	private String[] category = {"debug", "new feature", "refactor"};
-	private String[] state = {"new", "activated", "finished"}; 
+	private String[] states = {"new", "activated", "finished"}; 
 	private JLabel jlbName = new JLabel("Task Name: ");
 	private JLabel jlbCategory = new JLabel("Category: ");
 	private JLabel jlbState = new JLabel("State: ");
 	private JTextField jtfName = new JTextField();
 	private JComboBox jcbCategory = new JComboBox(category);
-	private JComboBox jcbState = new JComboBox(state);
+	private JComboBox jcbState = new JComboBox(states);
 	private JButton jbt = new JButton("Submit");
 	private JPanel p = new JPanel();
 	
@@ -40,13 +42,17 @@ public class NewTaskFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				String name = jlbName.getText();
-				String cate = jlbCategory.getText();
-				String state = jlbState.getText();
+				String name = jtfName.getText();
+				String cate = category[jcbCategory.getSelectedIndex()];
+				String state = states[jcbState.getSelectedIndex()];
 				Task task = new Task(name, state, cate);
-				TaskList.getTaskList().addChild(task);
-				SampleView.repaint(TaskList.getTaskList());	
-				((JFrame)(jbt.getParent().getParent())).dispose();
+				TaskList.getTaskList().addChild(task.name);	
+				Display.getDefault().syncExec(new Runnable() {
+				    public void run() {
+				    	SampleView.repaint(TaskList.getTaskList());
+				    }
+				}); 
+				//((JFrame)(jbt.getParent().getParent())).dispose();
 			}			
 		});
 		add(p);
