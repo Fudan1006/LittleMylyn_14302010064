@@ -27,8 +27,15 @@ public class NewTaskFrame extends JFrame {
 	private JComboBox jcbState = new JComboBox(states);
 	private JButton jbt = new JButton("Submit");
 	private JPanel p = new JPanel();
+	private static NewTaskFrame frame;
 	
-	NewTaskFrame() {
+	public static NewTaskFrame getInstance() {
+		if (frame == null)
+			frame = new NewTaskFrame();
+		return frame;
+	}
+	
+	private NewTaskFrame() {
 		p.setLayout(new GridLayout(0,2,5,5));
 		p.add(jlbName);
 		p.add(jtfName);
@@ -49,10 +56,10 @@ public class NewTaskFrame extends JFrame {
 				TaskList.getTaskList().addChild(task.name);	
 				Display.getDefault().syncExec(new Runnable() {
 				    public void run() {
-				    	SampleView.repaint(TaskList.getTaskList());
+				    	SampleView.tv.setInput(TaskList.getTaskList());
 				    }
 				}); 
-				//((JFrame)(jbt.getParent().getParent())).dispose();
+				frame.dispose();
 			}			
 		});
 		add(p);
