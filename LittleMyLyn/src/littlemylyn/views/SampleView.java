@@ -143,6 +143,20 @@ public class SampleView extends ViewPart {
 		tv.setSorter(new NameSorter());
 		root = TaskList.getTaskList();
 		tv.setInput(root);
+		tv.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
+			public void doubleClick(DoubleClickEvent arg0) {
+				// TODO Auto-generated method stub
+				IStructuredSelection is = tv.getStructuredSelection();
+				Node n = (Node)is.getFirstElement();
+				String filepath = n.getName();
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+				IWorkbenchPage page = window.getActivePage();
+//				IEditorPart editor = page.openEditor(arg0, arg1);input?????
+			}
+			
+		});
 		
 		// Create the help context id for the viewer's control
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(tv.getControl(), "LittleMyLyn.TreeViewer");
@@ -229,11 +243,8 @@ public class SampleView extends ViewPart {
 					Task task = (Task)is.getFirstElement();
 					TaskList.activatedTask = task;
 					task.setState("activated");
-//					IWorkbench workbench = PlatformUI.getWorkbench();
-//					IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-//					IWorkbenchPage page = window.getActivePage();
-//					IEditorPart editor = page.openEditor(arg0, arg1);
 					repaint();
+					tv.expandAll();
 				} else {
 					JOptionPane.showMessageDialog(null,
 							"You must deactivate all the other activated tasks first.", "Activate error",

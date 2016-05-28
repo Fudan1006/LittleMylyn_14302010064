@@ -34,6 +34,10 @@ public class Task extends Node{
 		this.category.setName(category);
 	}
 	
+	public Node getRelatedClass() {
+		return relatedClass;
+	}
+
 	public int addRelatedClass(String filepath) {
 		if (this.getName().equals("null")
 				&& state.getName().equals("null")
