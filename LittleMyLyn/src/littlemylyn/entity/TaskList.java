@@ -2,6 +2,8 @@ package littlemylyn.entity;
 
 public class TaskList extends Node {
 	private static TaskList root = null;
+	public static Task nullTask = new Task("null", "null", "null");
+	public static Task activatedTask = nullTask;
 
 	private TaskList() {
 	}
@@ -16,11 +18,6 @@ public class TaskList extends Node {
 	}
 
 	private void initTaskList() {
-		Task task = new Task("try a", "1", "1");
-		root.addChild(task.name);
-		Task a = new Task("try b", "2", "2");
-		root.addChild(a.name);
-		Task b = new Task("try c", "3", "3");
-		root.addChild(b.name);
 	}
+
 }

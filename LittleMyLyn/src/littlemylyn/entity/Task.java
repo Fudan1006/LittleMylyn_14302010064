@@ -1,22 +1,49 @@
 package littlemylyn.entity;
 
 import org.eclipse.jface.viewers.TreeNode;
+import org.eclipse.swt.widgets.Display;
+
+import littlemylyn.views.SampleView;
 
 public class Task extends Node{
-	public Node name = new Node();
-	public Node state = new Node();
-	//public static String[] states = {"new", "activated", "finished"};
-	public Node category = new Node();
-	//public static String[] categories = {"debug", "new feature", "refactor"}; 
-	public Node relatedClass = new Node();
+	public String name;
+	private Node state = new Node();
+	private Node category = new Node();
+	private Node relatedClass = new Node();
 	
-	Task(String n, String s, String c) {
-		name.setName(n);
+	public Task(String n, String s, String c) {
+		name = n;
+		this.setName(n);
 		state.setName(s);
 		category.setName(c);
-		name.addChild(state);
-		name.addChild(category);
-		name.addChild(relatedClass);
+		relatedClass.setName("Related Class("+relatedClass.getChildren().size()+")");
+		this.addChild(state);
+		this.addChild(category);
+		this.addChild(relatedClass);
+	}
+
+	public Node getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state.setName(state);
+	}
+
+	public void setCategory(String category) {
+		this.category.setName(category);
+	}
+	
+	public int addRelatedClass(String filepath) {
+		if (this.getName().equals("null")
+				&& state.getName().equals("null")
+				&& category.getName().equals("null"))
+			return -1;
+		Node rclass = new Node();
+		rclass.setName(filepath);
+		relatedClass.addChild(rclass);
+		SampleView.repaint();
+		return 1;
 	}
 
 }
