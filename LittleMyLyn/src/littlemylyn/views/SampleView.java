@@ -34,8 +34,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -225,6 +229,10 @@ public class SampleView extends ViewPart {
 					Task task = (Task)is.getFirstElement();
 					TaskList.activatedTask = task;
 					task.setState("activated");
+//					IWorkbench workbench = PlatformUI.getWorkbench();
+//					IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+//					IWorkbenchPage page = window.getActivePage();
+//					IEditorPart editor = page.openEditor(arg0, arg1);
 					repaint();
 				} else {
 					JOptionPane.showMessageDialog(null,
