@@ -22,16 +22,22 @@ public class Task extends Node{
 		this.addChild(relatedClass);
 	}
 
-	public void setState(Node state) {
-		this.state = state;
+	public Node getState() {
+		return state;
 	}
 
-	public void setCategory(Node category) {
-		this.category = category;
+	public void setState(String state) {
+		this.state.setName(state);
+	}
+
+	public void setCategory(String category) {
+		this.category.setName(category);
 	}
 	
 	public int addRelatedClass(String filepath) {
-		if (this.getName() == "null" && state.getName() == "null" && category.getName() == "null")
+		if (this.getName().equals("null")
+				&& state.getName().equals("null")
+				&& category.getName().equals("null"))
 			return -1;
 		Node rclass = new Node();
 		rclass.setName(filepath);

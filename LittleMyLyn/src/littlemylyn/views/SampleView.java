@@ -210,6 +210,8 @@ package littlemylyn.views;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -218,13 +220,17 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -340,6 +346,14 @@ public class SampleView extends ViewPart {
 		tv.setSorter(new NameSorter());
 		root = TaskList.getTaskList();
 		tv.setInput(root);
+//		tv.addSelectionChangedListener(new ISelectionChangedListener() {
+//			@Override
+//			public void selectionChanged(SelectionChangedEvent e) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			
+//		});
 
 		// Create the help context id for the viewer's control
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(tv.getControl(), "LittleMyLyn.TreeViewer");
@@ -375,9 +389,28 @@ public class SampleView extends ViewPart {
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
-		manager.add(newTaskAction);
 		manager.add(activateAction);
 		manager.add(deactivateAction);
+		manager.addMenuListener(new IMenuListener() {
+			@Override
+			public void menuAboutToShow(IMenuManager arg0) {
+				// TODO Auto-generated method stub
+				IStructuredSelection is = tv.getStructuredSelection();
+				Task task = (Task)is.getFirstElement();
+				//System.out.println("task name:"+task.name + task.getState());
+				if (task.getState().getName().equals("activated")) {
+					deactivateAction.setEnabled(true);
+					activateAction.setEnabled(false);
+				} else if (task.getState().getName().equals("finished")){
+					deactivateAction.setEnabled(false);
+					activateAction.setEnabled(true);
+				} else if (task.getState().getName().equals("new")) {
+					deactivateAction.setEnabled(true);
+					activateAction.setEnabled(true);
+				}
+			}
+			
+		});
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -403,13 +436,38 @@ public class SampleView extends ViewPart {
 
 		activateAction = new Action() {
 			public void run() {
-				//TaskList.activatedTask = this.getClass();
+				System.out.println("activated class: "+TaskList.activatedTask.getName());
+				if (TaskList.activatedTask.getName().equals("null")) {
+					IStructuredSelection is = tv.getStructuredSelection();
+					Task task = (Task)is.getFirstElement();
+					TaskList.activatedTask = task;
+					task.setState("activated");
+					repaint();
+				} else {
+					JOptionPane.showMessageDialog(null,
+							"You must deactivate all the other activated tasks first.", "Activate error",
+							JOptionPane.ERROR_MESSAGE);
+				}				
 			}
 		};
 		activateAction.setText("Activate");
 		activateAction.setToolTipText("Activate this task");
 		activateAction.setImageDescriptor(
-				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_PRINT_EDIT));
+		
+		deactivateAction = new Action() {
+			public void run() {
+				TaskList.activatedTask = TaskList.nullTask;
+				IStructuredSelection is = tv.getStructuredSelection();
+				Task task = (Task)is.getFirstElement();
+				task.setState("finished");
+				repaint();				
+			}
+		};
+		deactivateAction.setText("Deactivate");
+		deactivateAction.setToolTipText("Deactivate this task");
+		deactivateAction.setImageDescriptor(
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_STOP));
 	}
 
 	private void showMessage(String message) {

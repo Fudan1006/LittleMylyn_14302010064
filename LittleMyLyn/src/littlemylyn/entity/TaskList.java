@@ -2,7 +2,7 @@ package littlemylyn.entity;
 
 public class TaskList extends Node {
 	private static TaskList root = null;
-	private static Task nullTask = new Task("null", "null", "null");
+	public static Task nullTask = new Task("null", "null", "null");
 	public static Task activatedTask = nullTask;
 
 	private TaskList() {
