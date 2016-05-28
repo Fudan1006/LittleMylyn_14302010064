@@ -17,23 +17,23 @@ public class AddTask {
 //        	e.printStackTrace();
 //        }
     	
-    	String url = "jdbc:mysql://localhost:3306/LittleMyLyn";  
-        String user = "root";  
-        String password = "270329zuki";
-        Connection con;   
-        
-        try {   
-            con = DriverManager.getConnection(url, user, password);  
-            Statement stm = con.createStatement();
-            String sql = "insert into `tasklist` (`name`, `category`, `state`) values ('"
-            		+ task.name.getName() +"','"+ task.category.getName()
-            		+ "','" + task.state.getName() +"')";
-            stm.execute(sql);
-            stm.close();
-            con.close();
-        } catch (Exception e) {  
-            e.printStackTrace();  
-        }  
+//    	String url = "jdbc:mysql://localhost:3306/LittleMyLyn";  
+//        String user = "root";  
+//        String password = "270329zuki";
+//        Connection con;   
+//        
+//        try {   
+//            con = DriverManager.getConnection(url, user, password);  
+//            Statement stm = con.createStatement();
+//            String sql = "insert into `tasklist` (`name`, `category`, `state`) values ('"
+//            		+ task.name.getName() +"','"+ task.category.getName()
+//            		+ "','" + task.state.getName() +"')";
+//            stm.execute(sql);
+//            stm.close();
+//            con.close();
+//        } catch (Exception e) {  
+//            e.printStackTrace();  
+//        }  
     }  
 
 }

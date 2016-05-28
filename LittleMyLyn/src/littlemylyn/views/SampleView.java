@@ -232,6 +232,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
@@ -246,10 +247,11 @@ import littlemylyn.entity.TaskList;
 public class SampleView extends ViewPart {
 
 	public static final String ID = "littlemylyn.views.SampleView";
-	private Action action1;
-	private Action action2;
+	private Action newTaskAction;
+	private Action activateAction;
+	private Action deactivateAction;
 	private Node root;
-	public static TreeViewer tv;
+	private static TreeViewer tv;
 
 	public class TVContentProvider implements ITreeContentProvider {
 		@Override
@@ -294,7 +296,7 @@ public class SampleView extends ViewPart {
 			if (element instanceof TaskList)
 				text = "root";
 			else if (element instanceof Task)
-				text = ((Task) element).name.getName();
+				text = ((Task) element).getName();
 			else
 				text = ((Node) element).getName();
 			return text;
@@ -367,25 +369,26 @@ public class SampleView extends ViewPart {
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(action1);
-		manager.add(new Separator());
-		manager.add(action2);
+		manager.add(newTaskAction);
+		//manager.add(new Separator());
+		//manager.add(action2);
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
-		manager.add(action1);
-		manager.add(action2);
+		manager.add(newTaskAction);
+		manager.add(activateAction);
+		manager.add(deactivateAction);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(action1);
-		manager.add(action2);
+		manager.add(newTaskAction);
+		//manager.add(action2);
 	}
 
 	private void makeActions() {
-		action1 = new Action() {
+		newTaskAction = new Action() {
 			public void run() {
 				NewTaskFrame ntf = NewTaskFrame.getInstance();
 				ntf.setVisible(true);
@@ -393,20 +396,20 @@ public class SampleView extends ViewPart {
 				ntf.setLocation(300, 100);
 			}
 		};
-		action1.setText("New Task");
-		action1.setToolTipText("Create a new task");
-		action1.setImageDescriptor(
+		newTaskAction.setText("New Task");
+		newTaskAction.setToolTipText("Create a new task");
+		newTaskAction.setImageDescriptor(
 				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
 
-		action2 = new Action() {
+		activateAction = new Action() {
 			public void run() {
-				showMessage("Action 2 executed");
+				//TaskList.activatedTask = this.getClass();
 			}
 		};
-		action2.setText("Action 2");
-		action2.setToolTipText("Action 2 tooltip");
-		action2.setImageDescriptor(
-				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+		activateAction.setText("Activate");
+		activateAction.setToolTipText("Activate this task");
+		activateAction.setImageDescriptor(
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
 	}
 
 	private void showMessage(String message) {
@@ -417,4 +420,11 @@ public class SampleView extends ViewPart {
 		// TODO Auto-generated method stub
 	}
 
+	public static void repaint() {
+		Display.getDefault().syncExec(new Runnable() {
+		    public void run() {
+		    	tv.setInput(TaskList.getTaskList());
+		    }
+		}); 
+	}
 }

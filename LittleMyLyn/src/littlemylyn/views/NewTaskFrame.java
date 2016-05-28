@@ -54,14 +54,11 @@ public class NewTaskFrame extends JFrame {
 				String cate = category[jcbCategory.getSelectedIndex()];
 				String state = states[jcbState.getSelectedIndex()];
 				Task task = new Task(name, state, cate);
-				TaskList.getTaskList().addChild(task.name);	
+				TaskList.getTaskList().addChild(task);	
 				//AddTask.add(task);
-				Display.getDefault().syncExec(new Runnable() {
-				    public void run() {
-				    	SampleView.tv.setInput(TaskList.getTaskList());
-				    }
-				}); 
+				SampleView.repaint();
 				frame.dispose();
+				jtfName.setText("");
 			}			
 		});
 		add(p);
