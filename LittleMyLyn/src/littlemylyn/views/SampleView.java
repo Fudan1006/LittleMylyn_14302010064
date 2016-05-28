@@ -224,7 +224,7 @@ public class SampleView extends ViewPart {
 
 		activateAction = new Action() {
 			public void run() {
-				if (TaskList.activatedTask.getName().equals("null")) {
+				if (TaskList.activatedTask.getState().getName().equals("null")) {
 					IStructuredSelection is = tv.getStructuredSelection();
 					Task task = (Task)is.getFirstElement();
 					TaskList.activatedTask = task;
