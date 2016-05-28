@@ -346,15 +346,7 @@ public class SampleView extends ViewPart {
 		tv.setSorter(new NameSorter());
 		root = TaskList.getTaskList();
 		tv.setInput(root);
-//		tv.addSelectionChangedListener(new ISelectionChangedListener() {
-//			@Override
-//			public void selectionChanged(SelectionChangedEvent e) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//		});
-
+		
 		// Create the help context id for the viewer's control
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(tv.getControl(), "LittleMyLyn.TreeViewer");
 		getSite().setSelectionProvider(tv);
@@ -397,7 +389,6 @@ public class SampleView extends ViewPart {
 				// TODO Auto-generated method stub
 				IStructuredSelection is = tv.getStructuredSelection();
 				Task task = (Task)is.getFirstElement();
-				//System.out.println("task name:"+task.name + task.getState());
 				if (task.getState().getName().equals("activated")) {
 					deactivateAction.setEnabled(true);
 					activateAction.setEnabled(false);
@@ -411,7 +402,7 @@ public class SampleView extends ViewPart {
 			}
 			
 		});
-		// Other plug-ins can contribute there actions here
+
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
@@ -436,7 +427,6 @@ public class SampleView extends ViewPart {
 
 		activateAction = new Action() {
 			public void run() {
-				System.out.println("activated class: "+TaskList.activatedTask.getName());
 				if (TaskList.activatedTask.getName().equals("null")) {
 					IStructuredSelection is = tv.getStructuredSelection();
 					Task task = (Task)is.getFirstElement();
