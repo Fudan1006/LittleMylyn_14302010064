@@ -207,9 +207,6 @@
 //}
 package littlemylyn.views;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -217,13 +214,8 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -234,11 +226,17 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+
 import littlemylyn.entity.Node;
 import littlemylyn.entity.Task;
 import littlemylyn.entity.TaskList;
@@ -400,7 +398,8 @@ public class SampleView extends ViewPart {
 
 		action2 = new Action() {
 			public void run() {
-				showMessage("Action 2 executed");
+				//showMessage("Action 2 executed");
+				recordRelatedClass();
 			}
 		};
 		action2.setText("Action 2");
@@ -417,4 +416,21 @@ public class SampleView extends ViewPart {
 		// TODO Auto-generated method stub
 	}
 
+	public void recordRelatedClass(){
+    //Get the active class and record to a txt file 
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+		IWorkbenchPage page = window.getActivePage();
+		IEditorPart part = page.getActiveEditor(); 
+		IEditorInput input = part.getEditorInput();
+		System.out.println("The actived class name: " + input.getName());
+		String path = ((IFileEditorInput)input).getFile().getFullPath().toString();
+		System.out.println("The actived class path: " + path);
+    //TODO Add the related class to the actived task's related list
+		//if(TaskList.activedTask.addRelatedClass(path) == 1){
+	    //}
+		//else{
+		// //-1
+		//}
+	}
 }
