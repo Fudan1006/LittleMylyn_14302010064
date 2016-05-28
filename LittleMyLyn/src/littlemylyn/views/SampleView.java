@@ -216,6 +216,8 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -246,6 +248,11 @@ public class SampleView extends ViewPart {
 	public static final String ID = "littlemylyn.views.SampleView";
 	private Action action1;
 	private Action action2;
+	private Action action3;
+    private Action action4;
+    private Action action5;
+    private Action action6;
+	
 	private Node root;
 	private TreeViewer tv;
 
@@ -373,6 +380,13 @@ public class SampleView extends ViewPart {
 	private void fillContextMenu(IMenuManager manager) {
 		manager.add(action1);
 		manager.add(action2);
+		manager.add(action3);
+		MenuManager menuMgr = new MenuManager("Set category");
+		menuMgr.add(action4);
+		menuMgr.add(action5);
+		menuMgr.add(action6);
+		manager.add(menuMgr);
+		
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -402,11 +416,65 @@ public class SampleView extends ViewPart {
 				recordRelatedClass();
 			}
 		};
-		action2.setText("Action 2");
-		action2.setToolTipText("Action 2 tooltip");
+		action2.setText("Record Related Class");
+		action2.setToolTipText("Record Related Class");
 		action2.setImageDescriptor(
 				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+		
+		action3 = new Action() {
+			public void run() {
+				ISelection selection = tv.getSelection();
+				Object obj = ((IStructuredSelection)selection).getFirstElement();
+				Node task = ((Node)obj);
+				System.out.println("The task's state is finished: " + task.getName());
+				//task.setState("finished");
+			}
+		};
+		action3.setText("Finished");
+		action3.setToolTipText("Finished");
+		action3.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
+		
+		action4 = new Action() {
+			public void run() {
+				ISelection selection = tv.getSelection();
+				Object obj = ((IStructuredSelection)selection).getFirstElement();
+				Node task = ((Node)obj);
+				System.out.println("The task's category is debug: " + task.getName());
+				//task.setState("debug");
+			}
+		};
+		action4.setText("Debug");
+		action4.setToolTipText("Debug");
+		action4.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
+		
+		action5 = new Action() {
+			public void run() {
+				ISelection selection = tv.getSelection();
+				Object obj = ((IStructuredSelection)selection).getFirstElement();
+				Node task = ((Node)obj);
+				System.out.println("The task's category is new feature: " + task.getName());
+				//task.setState("new feature");
+			}
+		};
+		action5.setText("New feature");
+		action5.setToolTipText("New feature");
+		action5.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
+		
+		action6 = new Action() {
+			public void run() {
+				ISelection selection = tv.getSelection();
+				Object obj = ((IStructuredSelection)selection).getFirstElement();
+				Node task = ((Node)obj);
+				System.out.println("The task's category is refactor: " + task.getName());
+				//task.setState("refactor");
+			}
+		};
+		action6.setText("Refactor");
+		action6.setToolTipText("Refactor");
+		action6.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
+		
 	}
+	
 
 	private void showMessage(String message) {
 		MessageDialog.openInformation(tv.getControl().getShell(), "Sample View", message);
