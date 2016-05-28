@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Display;
 
 import littlemylyn.entity.Task;
 import littlemylyn.entity.TaskList;
-import littlemylyn.sql.AddTask;
+//import littlemylyn.sql.AddTask;
 
 public class NewTaskFrame extends JFrame {
 	private String[] category = {"debug", "new feature", "refactor"};
