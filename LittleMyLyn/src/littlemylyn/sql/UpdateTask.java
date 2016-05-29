@@ -20,7 +20,14 @@ public class UpdateTask {
             Statement stm = con.createStatement();
             String sql = "select `relatedclass` from `tasklist` where `name`='"+name+"'";
             ResultSet rs = stm.executeQuery(sql);
-            String related = rs.getString("relatedclass") + " " + filepath;
+            rs.next();
+            String old = rs.getString("relatedclass");
+            String[] files = old.split(" ");
+            for (String temp : files) {
+            	if (temp.equals(filepath))
+            		return;
+            }
+            String related = old + " " + filepath;
             sql = "update `tasklist` set `relatedclass`='" + related 
             		+ "' where `name`='"+name+"'";
             stm.execute(sql);

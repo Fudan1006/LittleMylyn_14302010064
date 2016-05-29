@@ -384,8 +384,10 @@ public class SampleView extends ViewPart {
 		IEditorInput input = part.getEditorInput();
 		String path = ((IFileEditorInput)input).getFile().getFullPath().toString();
     //TODO Add the related class to the actived task's related list
+		TaskList.activatedTask.addRelatedClass(path);
 		UpdateTask.addRelatedClass(path, TaskList.activatedTask.getName());
 	} 
+	
 	public static void repaint() {
 		Display.getDefault().syncExec(new Runnable() {
 		    public void run() {
