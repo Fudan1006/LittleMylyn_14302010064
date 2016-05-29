@@ -50,7 +50,7 @@ public class Task extends Node{
 		ArrayList<Node> children = relatedClass.getChildren();
 		for (int i = 0; i < children.size(); i++) {
 			if (children.get(i).getName().equals(filepath))
-				return -1;
+				return 1;
 		}
 		relatedClass.addChild(rclass);
 		relatedClass.setName("Related Class("+relatedClass.getChildren().size()+")");
