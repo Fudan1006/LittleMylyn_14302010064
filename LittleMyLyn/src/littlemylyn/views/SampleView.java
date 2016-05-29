@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -27,6 +28,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -254,7 +256,11 @@ public class SampleView extends ViewPart {
 					task.setState("activated");
 					UpdateTask.update(task.getName(), "state", "activated");
 					repaint();
-					tv.expandAll();
+					tv.setExpandedState(task, true);
+					for (Node property : task.getChildren()) {
+						if (property.getType().equals("related"))
+							tv.setExpandedState(property, true);
+					}					
 				} else {
 					JOptionPane.showMessageDialog(null,
 							"You must deactivate all the other activated tasks first.", "Activate error",
@@ -376,11 +382,9 @@ public class SampleView extends ViewPart {
 		IWorkbenchPage page = window.getActivePage();
 		IEditorPart part = page.getActiveEditor(); 
 		IEditorInput input = part.getEditorInput();
-		System.out.println("The actived class name: " + input.getName());
 		String path = ((IFileEditorInput)input).getFile().getFullPath().toString();
-		System.out.println("The actived class path: " + path);
     //TODO Add the related class to the actived task's related list
-		System.out.println("added!  " + TaskList.activatedTask.addRelatedClass(path)); 
+		UpdateTask.addRelatedClass(path, TaskList.activatedTask.getName());
 	} 
 	public static void repaint() {
 		Display.getDefault().syncExec(new Runnable() {
