@@ -19,5 +19,4 @@ public class TaskList extends Node {
 
 	private void initTaskList() {
 	}
-
 }

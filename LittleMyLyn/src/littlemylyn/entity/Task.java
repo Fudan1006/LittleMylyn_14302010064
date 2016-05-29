@@ -35,6 +35,7 @@ public class Task extends Node{
 	}
 	
 	public int addRelatedClass(String filepath) {
+		System.out.print("into ");
 		if (this.getName().equals("null")
 				&& state.getName().equals("null")
 				&& category.getName().equals("null"))

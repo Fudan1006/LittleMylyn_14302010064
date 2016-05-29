@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -15,7 +16,7 @@ import org.eclipse.swt.widgets.Display;
 
 import littlemylyn.entity.Task;
 import littlemylyn.entity.TaskList;
-//import littlemylyn.sql.AddTask;
+import littlemylyn.sql.AddTask;
 
 public class NewTaskFrame extends JFrame {
 	private String[] category = {"debug", "new feature", "refactor"};
@@ -54,8 +55,19 @@ public class NewTaskFrame extends JFrame {
 				String cate = category[jcbCategory.getSelectedIndex()];
 				String state = states[jcbState.getSelectedIndex()];
 				Task task = new Task(name, state, cate);
+				if (state.equals("activated")) {
+					if (TaskList.activatedTask.name.equals("null")) {
+						TaskList.activatedTask = task;
+					} else {
+						JOptionPane.showMessageDialog(null,
+								"You must deactivate all the other activated tasks first.",
+								"New task error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+				}				
 				TaskList.getTaskList().addChild(task);	
-				//AddTask.add(task);
+				//store to database
 				SampleView.repaint();
 				frame.dispose();
 				jtfName.setText("");
@@ -63,4 +75,4 @@ public class NewTaskFrame extends JFrame {
 		});
 		add(p);
 	}
-}
+} 
