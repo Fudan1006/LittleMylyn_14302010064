@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -34,7 +35,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -42,7 +45,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+
 import littlemylyn.entity.Node;
 import littlemylyn.entity.Task;
 import littlemylyn.entity.TaskList;
@@ -255,6 +258,7 @@ public class SampleView extends ViewPart {
 				}				
 			}
 		};
+
 		activateAction.setText("Activate");
 		activateAction.setToolTipText("Activate this task");
 		activateAction.setImageDescriptor(
@@ -275,6 +279,7 @@ public class SampleView extends ViewPart {
 		deactivateAction.setImageDescriptor(
 				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_STOP));
 	}
+	
 
 	private void showMessage(String message) {
 		MessageDialog.openInformation(tv.getControl().getShell(), "Sample View", message);
@@ -283,6 +288,7 @@ public class SampleView extends ViewPart {
 	public void setFocus() {
 		// TODO Auto-generated method stub
 	}
+
 
 	public static void repaint() {
 		Display.getDefault().syncExec(new Runnable() {
