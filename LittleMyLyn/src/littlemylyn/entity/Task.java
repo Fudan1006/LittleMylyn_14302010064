@@ -1,5 +1,7 @@
 package littlemylyn.entity;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.swt.widgets.Display;
 
@@ -45,6 +47,11 @@ public class Task extends Node{
 			return -1;
 		Node rclass = new Node();
 		rclass.setName(filepath);
+		ArrayList<Node> children = relatedClass.getChildren();
+		for (int i = 0; i < children.size(); i++) {
+			if (children.get(i).getName().equals(filepath))
+				return -1;
+		}
 		relatedClass.addChild(rclass);
 		relatedClass.setName("Related Class("+relatedClass.getChildren().size()+")");
 		SampleView.repaint();
