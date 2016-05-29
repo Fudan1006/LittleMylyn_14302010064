@@ -1,28 +1,18 @@
 package littlemylyn.views; 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.JOptionPane;
- 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator; 
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener; 
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener; 
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener; 
-import org.eclipse.jface.viewers.IStructuredSelection; 
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent; 
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -32,16 +22,18 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IActionBars; 
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;  
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 
 import littlemylyn.entity.Node;
@@ -58,6 +50,8 @@ public class SampleView extends ViewPart {
     private Action refactorAction;
 	private Action activateAction;
 	private Action deactivateAction;
+	
+	private Action doubleClickAction;
 	 
 	private Node root;
 	private static TreeViewer tv;
@@ -156,6 +150,7 @@ public class SampleView extends ViewPart {
 		makeActions();
 		hookContextMenu();
 		contributeToActionBars();
+		hookDoubleClickAction();
 	}
 
 	private void hookContextMenu() {
@@ -325,6 +320,40 @@ public class SampleView extends ViewPart {
 		refactorAction.setText("Refactor");
 		refactorAction.setToolTipText("Refactor");
 		refactorAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
+		
+		doubleClickAction = new Action() {
+			public void run() {
+				IStructuredSelection is = tv.getStructuredSelection();
+				Node relatedClass = (Node)is.getFirstElement();
+				//if(relatedClass.isClass()){
+					String fName = relatedClass.getName();
+					
+					IWorkbenchPage wbPage = PlatformUI.getWorkbench()  
+		                    .getActiveWorkbenchWindow().getActivePage();
+					IEditorPart editor = PlatformUI.getWorkbench()  
+			                .getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
+				
+					String[] stringArray = fName.split("/");
+					if(stringArray.length > 2){
+					String prjName = stringArray[1];
+				    System.out.println(prjName);
+				    fName = "";
+				    for(int i = 2; i < stringArray.length; i++){
+				    	fName += "/" + stringArray[i];
+				    }
+				    System.out.println("the class name: " + fName);
+					IFile file = ResourcesPlugin.getWorkspace().getRoot().getProject(prjName).getFile(fName);
+			            try {  
+			                if (file != null) {  
+			                    IDE.openEditor(wbPage, file);  
+			                }  
+			            } catch (PartInitException e) {  
+			                e.printStackTrace();  
+			            }   
+				//}
+					}
+			}
+		};
 	}
 	
 	public void setFocus() {
@@ -350,5 +379,13 @@ public class SampleView extends ViewPart {
 		    	tv.setInput(TaskList.getTaskList());
 		    }
 		}); 
+	}
+	
+	private void hookDoubleClickAction() {
+		tv.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				doubleClickAction.run();
+			}
+		});
 	}
 }

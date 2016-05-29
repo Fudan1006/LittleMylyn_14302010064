@@ -5,7 +5,8 @@ import java.util.List;
 public class Node {
     private String name ;
     private Node parent ;
-    private ArrayList<Node> children = new ArrayList<Node>();   
+    private ArrayList<Node> children = new ArrayList<Node>();
+    private boolean isClass = false;
 
     Node() {}  
 
@@ -41,5 +42,15 @@ public class Node {
     public ArrayList<Node> getChildren() {
        return children;
     }
+
+	public boolean isClass() {
+		return isClass;
+	}
+
+	public void setClass(boolean isClass) {
+		this.isClass = isClass;
+	}
+    
+    
 
 }
