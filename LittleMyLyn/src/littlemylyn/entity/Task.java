@@ -46,6 +46,7 @@ public class Task extends Node{
 		Node rclass = new Node();
 		rclass.setName(filepath);
 		relatedClass.addChild(rclass);
+		relatedClass.setName("Related Class("+relatedClass.getChildren().size()+")");
 		SampleView.repaint();
 		return 1;
 	}
