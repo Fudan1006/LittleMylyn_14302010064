@@ -281,12 +281,10 @@ public class SampleView extends ViewPart {
 		
 		debugAction = new Action() {
 			public void run() {
-				if (TaskList.activatedTask.getName().equals("null")) {
 					IStructuredSelection is = tv.getStructuredSelection();
 					Task task = (Task)is.getFirstElement();
 					task.setCategory("debug");
 					repaint();
-				}
 			}
 		};
 		debugAction.setText("Debug");
@@ -295,12 +293,10 @@ public class SampleView extends ViewPart {
 		
 		newFeatureAction = new Action() {
 			public void run() {
-				if (TaskList.activatedTask.getName().equals("null")) {
 					IStructuredSelection is = tv.getStructuredSelection();
 					Task task = (Task)is.getFirstElement();
 					task.setCategory("new feature");
 					repaint();
-				}
 			}
 		};
 		newFeatureAction.setText("New feature");
@@ -309,12 +305,10 @@ public class SampleView extends ViewPart {
 		
 		refactorAction = new Action() {
 			public void run() {
-				if (TaskList.activatedTask.getName().equals("null")) {
 					IStructuredSelection is = tv.getStructuredSelection();
 					Task task = (Task)is.getFirstElement();
 					task.setCategory("refactor");
 					repaint();
-				}
 			}
 		};
 		refactorAction.setText("Refactor");
@@ -325,7 +319,7 @@ public class SampleView extends ViewPart {
 			public void run() {
 				IStructuredSelection is = tv.getStructuredSelection();
 				Node relatedClass = (Node)is.getFirstElement();
-				//if(relatedClass.isClass()){
+				//if(relatedClass.getType.equals("class")){
 					String fName = relatedClass.getName();
 					
 					IWorkbenchPage wbPage = PlatformUI.getWorkbench()  
@@ -335,13 +329,11 @@ public class SampleView extends ViewPart {
 				
 					String[] stringArray = fName.split("/");
 					if(stringArray.length > 2){
-					String prjName = stringArray[1];
-				    System.out.println(prjName);
+					String prjName = stringArray[1]; 
 				    fName = "";
 				    for(int i = 2; i < stringArray.length; i++){
 				    	fName += "/" + stringArray[i];
-				    }
-				    System.out.println("the class name: " + fName);
+				    } 
 					IFile file = ResourcesPlugin.getWorkspace().getRoot().getProject(prjName).getFile(fName);
 			            try {  
 			                if (file != null) {  
