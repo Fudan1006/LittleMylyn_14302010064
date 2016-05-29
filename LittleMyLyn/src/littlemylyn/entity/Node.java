@@ -7,7 +7,7 @@ public class Node {
     private String name ;
     private Node parent ;
     private ArrayList<Node> children = new ArrayList<Node>();   
-    private boolean isClass = false;
+    private String type;
 
     Node() {}  
 
@@ -44,11 +44,11 @@ public class Node {
        return children;
     }
 
-    public boolean isClass() {
-		return isClass;
+    public String getType() {
+		return type;
 	}
 
-	public void setClass(boolean isClass) {
-		this.isClass = isClass;
+	public void setType(String type) {
+		this.type = type;
 	}
 }

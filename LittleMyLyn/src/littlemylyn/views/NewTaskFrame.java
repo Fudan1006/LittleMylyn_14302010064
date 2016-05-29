@@ -56,7 +56,7 @@ public class NewTaskFrame extends JFrame {
 				String state = states[jcbState.getSelectedIndex()];
 				Task task = new Task(name, state, cate);
 				if (state.equals("activated")) {
-					if (TaskList.activatedTask.name.equals("null")) {
+					if (TaskList.activatedTask.getName().equals("null")) {
 						TaskList.activatedTask = task;
 					} else {
 						JOptionPane.showMessageDialog(null,
@@ -67,8 +67,8 @@ public class NewTaskFrame extends JFrame {
 					}
 				}				
 				TaskList.getTaskList().addChild(task);	
-				//store to database
 				SampleView.repaint();
+				AddTask.add(task);
 				frame.dispose();
 				jtfName.setText("");
 			}			

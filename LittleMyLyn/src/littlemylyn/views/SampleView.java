@@ -46,6 +46,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import littlemylyn.entity.Node;
 import littlemylyn.entity.Task;
 import littlemylyn.entity.TaskList;
+import littlemylyn.sql.UpdateTask;
 
 public class SampleView extends ViewPart {
 
@@ -141,6 +142,7 @@ public class SampleView extends ViewPart {
 		tv.setContentProvider(new TVContentProvider());
 		tv.setLabelProvider(new TVLabelProvider());
 		tv.setSorter(new NameSorter());
+		TaskList.initTaskList();
 		root = TaskList.getTaskList();
 		tv.setInput(root);
 		tv.addDoubleClickListener(new IDoubleClickListener() {
@@ -243,6 +245,7 @@ public class SampleView extends ViewPart {
 					Task task = (Task)is.getFirstElement();
 					TaskList.activatedTask = task;
 					task.setState("activated");
+					UpdateTask.update(task.getName(), "state", "activated");
 					repaint();
 					tv.expandAll();
 				} else {
@@ -263,6 +266,7 @@ public class SampleView extends ViewPart {
 				IStructuredSelection is = tv.getStructuredSelection();
 				Task task = (Task)is.getFirstElement();
 				task.setState("finished");
+				UpdateTask.update(task.getName(), "state", "finished");
 				repaint();				
 			}
 		};
