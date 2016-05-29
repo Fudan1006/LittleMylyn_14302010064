@@ -1,17 +1,19 @@
+
 package littlemylyn.views;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JOptionPane;
-
-
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -43,7 +45,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 
 import littlemylyn.entity.Node;
@@ -54,9 +58,16 @@ import littlemylyn.sql.UpdateTask;
 public class SampleView extends ViewPart {
 
 	public static final String ID = "littlemylyn.views.SampleView";
-	private Action newTaskAction;
+	private Action newTaskAction; 
+	private Action recordRelatedClassAction;
+    private Action debugAction;
+    private Action newFeatureAction;
+    private Action refactorAction;
 	private Action activateAction;
 	private Action deactivateAction;
+	
+	private Action doubleClickAction;
+	 
 	private Node root;
 	private static TreeViewer tv;
 
@@ -148,20 +159,6 @@ public class SampleView extends ViewPart {
 		TaskList.initTaskList();
 		root = TaskList.getTaskList();
 		tv.setInput(root);
-		tv.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent arg0) {
-				// TODO Auto-generated method stub
-				IStructuredSelection is = tv.getStructuredSelection();
-				Node n = (Node)is.getFirstElement();
-				String filepath = n.getName();
-				IWorkbench workbench = PlatformUI.getWorkbench();
-				IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-				IWorkbenchPage page = window.getActivePage();
-//				IEditorPart editor = page.openEditor(arg0, arg1);input?????
-			}
-			
-		});
 		
 		// Create the help context id for the viewer's control
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(tv.getControl(), "LittleMyLyn.TreeViewer");
@@ -169,6 +166,7 @@ public class SampleView extends ViewPart {
 		makeActions();
 		hookContextMenu();
 		contributeToActionBars();
+		hookDoubleClickAction();
 	}
 
 	private void hookContextMenu() {
@@ -192,11 +190,17 @@ public class SampleView extends ViewPart {
 
 	private void fillLocalPullDown(IMenuManager manager) {
 		manager.add(newTaskAction);
-		//manager.add(new Separator());
-		//manager.add(action2);
 	}
 
-	private void fillContextMenu(IMenuManager manager) {
+	private void fillContextMenu(IMenuManager manager) { 
+		manager.add(recordRelatedClassAction);
+		MenuManager menuMgr = new MenuManager("Set category");
+		menuMgr.add(debugAction);
+		menuMgr.add(newFeatureAction);
+		menuMgr.add(refactorAction);
+		manager.add(menuMgr);
+		
+		// Other plug-ins can contribute there actions here 
 		manager.add(activateAction);
 		manager.add(deactivateAction);
 		manager.addMenuListener(new IMenuListener() {
@@ -224,10 +228,10 @@ public class SampleView extends ViewPart {
 
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(newTaskAction);
-		//manager.add(action2);
 	}
 
-	private void makeActions() {
+	private void makeActions() { 
+		//new a task  
 		newTaskAction = new Action() {
 			public void run() {
 				NewTaskFrame ntf = NewTaskFrame.getInstance();
@@ -258,7 +262,6 @@ public class SampleView extends ViewPart {
 				}				
 			}
 		};
-
 		activateAction.setText("Activate");
 		activateAction.setToolTipText("Activate this task");
 		activateAction.setImageDescriptor(
@@ -276,25 +279,123 @@ public class SampleView extends ViewPart {
 		};
 		deactivateAction.setText("Deactivate");
 		deactivateAction.setToolTipText("Deactivate this task");
-		deactivateAction.setImageDescriptor(
-				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_STOP));
+		deactivateAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_STOP));
+	
+		//modify the category of the task
+		recordRelatedClassAction = new Action() {
+			public void run() {
+				recordRelatedClass();			
+			}
+		};
+		recordRelatedClassAction.setText("Record Related Class");
+		recordRelatedClassAction.setToolTipText("Record Related Class");
+		recordRelatedClassAction.setImageDescriptor(
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+		
+		debugAction = new Action() {
+			public void run() {
+					IStructuredSelection is = tv.getStructuredSelection();
+					Task task = (Task)is.getFirstElement();
+					task.setCategory("debug");
+					repaint();
+					UpdateTask.update(task.getName(), "category", "debug");
+			}
+		};
+		debugAction.setText("Debug");
+		debugAction.setToolTipText("Debug");
+		debugAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
+		
+		newFeatureAction = new Action() {
+			public void run() {
+					IStructuredSelection is = tv.getStructuredSelection();
+					Task task = (Task)is.getFirstElement();
+					task.setCategory("new feature");
+					repaint();
+					UpdateTask.update(task.getName(), "category", "new feature");
+			}
+		};
+		newFeatureAction.setText("New feature");
+		newFeatureAction.setToolTipText("New feature");
+		newFeatureAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
+		
+		refactorAction = new Action() {
+			public void run() {
+					IStructuredSelection is = tv.getStructuredSelection();
+					Task task = (Task)is.getFirstElement();
+					task.setCategory("refactor");
+					repaint();
+					UpdateTask.update(task.getName(), "category", "refactor");
+			}
+		};
+		refactorAction.setText("Refactor");
+		refactorAction.setToolTipText("Refactor");
+		refactorAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
+		
+		doubleClickAction = new Action() {
+			public void run() {
+				IStructuredSelection is = tv.getStructuredSelection();
+				Node relatedClass = (Node)is.getFirstElement();
+				if(relatedClass.getType().equals("class")){
+					String fName = relatedClass.getName();
+					
+					IWorkbenchPage wbPage = PlatformUI.getWorkbench()  
+		                    .getActiveWorkbenchWindow().getActivePage();
+					IEditorPart editor = PlatformUI.getWorkbench()  
+			                .getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
+				
+					String[] stringArray = fName.split("/");
+					if(stringArray.length > 2){
+					String prjName = stringArray[1]; 
+				    fName = "";
+				    for(int i = 2; i < stringArray.length; i++){
+				    	fName += "/" + stringArray[i];
+				    } 
+					IFile file = ResourcesPlugin.getWorkspace().getRoot().getProject(prjName).getFile(fName);
+			            try {  
+			                if (file != null) {  
+			                    IDE.openEditor(wbPage, file);  
+			                }  
+			            } catch (PartInitException e) {  
+			                e.printStackTrace();  
+			            }   
+				}
+					}
+			}
+		};
 	}
 	
-
-	private void showMessage(String message) {
-		MessageDialog.openInformation(tv.getControl().getShell(), "Sample View", message);
-	}
 
 	public void setFocus() {
 		// TODO Auto-generated method stub
 	}
-
-
+ 
+	public void recordRelatedClass(){
+    //Get the active class and record to a txt file 
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+		IWorkbenchPage page = window.getActivePage();
+		IEditorPart part = page.getActiveEditor(); 
+		IEditorInput input = part.getEditorInput();
+		System.out.println("The actived class name: " + input.getName());
+		String path = ((IFileEditorInput)input).getFile().getFullPath().toString();
+		System.out.println("The actived class path: " + path);
+    //TODO Add the related class to the actived task's related list
+		System.out.println("added!  " + TaskList.activatedTask.addRelatedClass(path)); 
+	} 
 	public static void repaint() {
 		Display.getDefault().syncExec(new Runnable() {
 		    public void run() {
 		    	tv.setInput(TaskList.getTaskList());
 		    }
 		}); 
+	}
+	
+	private void hookDoubleClickAction() {
+		tv.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				doubleClickAction.run();
+			}
+		});
+
 	}
 }

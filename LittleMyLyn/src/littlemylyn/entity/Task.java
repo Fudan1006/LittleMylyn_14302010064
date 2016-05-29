@@ -76,3 +76,4 @@ public class Task extends Node {
 		relatedClass.setName("Related Class("+relatedClass.getChildren().size()+")");
 	}
 }
+
