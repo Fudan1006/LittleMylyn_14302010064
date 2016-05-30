@@ -24,8 +24,12 @@ public class UpdateTask {
             String old = rs.getString("relatedclass");
             String[] files = old.split(" ");
             for (String temp : files) {
-            	if (temp.equals(filepath))
+            	if (temp.equals(filepath)) {
+            		stm.close();
+                    con.close();
             		return;
+            	}
+            		
             }
             String related = old + " " + filepath;
             sql = "update `tasklist` set `relatedclass`='" + related 
