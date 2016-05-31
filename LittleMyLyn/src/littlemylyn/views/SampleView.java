@@ -1,4 +1,9 @@
-package littlemylyn.views; 
+package littlemylyn.views;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.JOptionPane;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.Action;
@@ -7,12 +12,21 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -39,6 +53,7 @@ import org.eclipse.ui.part.ViewPart;
 import littlemylyn.entity.Node;
 import littlemylyn.entity.Task;
 import littlemylyn.entity.TaskList;
+import littlemylyn.sql.UpdateTask;
 
 public class SampleView extends ViewPart {
 
@@ -141,6 +156,7 @@ public class SampleView extends ViewPart {
 		tv.setContentProvider(new TVContentProvider());
 		tv.setLabelProvider(new TVLabelProvider());
 		tv.setSorter(new NameSorter());
+		TaskList.initTaskList();
 		root = TaskList.getTaskList();
 		tv.setInput(root);
 		
@@ -173,7 +189,7 @@ public class SampleView extends ViewPart {
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(newTaskAction); 
+		manager.add(newTaskAction);
 	}
 
 	private void fillContextMenu(IMenuManager manager) { 
@@ -211,7 +227,7 @@ public class SampleView extends ViewPart {
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(newTaskAction); 
+		manager.add(newTaskAction);
 	}
 
 	private void makeActions() { 
@@ -227,26 +243,26 @@ public class SampleView extends ViewPart {
 		newTaskAction.setText("New Task");
 		newTaskAction.setToolTipText("Create a new task");
 		newTaskAction.setImageDescriptor(
-				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
- 
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD)); 
 		//activate the task  
 		activateAction = new Action() {
-			public void run() { 
+			public void run() {
 				if (TaskList.activatedTask.getState().getName().equals("null")) {
 					IStructuredSelection is = tv.getStructuredSelection();
 					Task task = (Task)is.getFirstElement();
 					TaskList.activatedTask = task;
 					task.setState("activated");
-//					IWorkbench workbench = PlatformUI.getWorkbench();
-//					IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-//					IWorkbenchPage page = window.getActivePage();
-//					IEditorPart editor = page.openEditor(arg0, arg1);
+					UpdateTask.update(task.getName(), "state", "activated");
 					repaint();
+					tv.setExpandedState(task, true);
+					for (Node property : task.getChildren()) {
+						if (property.getType().equals("related"))
+							tv.setExpandedState(property, true);
+					}					
 				} else {
-//					JOptionPane.showMessageDialog(null,
-//							"You must deactivate all the other activated tasks first.", "Activate error",
-//							JOptionPane.ERROR_MESSAGE); 
-					System.out.println("You must deactivate all the other activated tasks first.");
+					JOptionPane.showMessageDialog(null,
+							"You must deactivate all the other activated tasks first.", "Activate error",
+							JOptionPane.ERROR_MESSAGE);
 				}				
 			}
 		};
@@ -261,6 +277,7 @@ public class SampleView extends ViewPart {
 				IStructuredSelection is = tv.getStructuredSelection();
 				Task task = (Task)is.getFirstElement();
 				task.setState("finished");
+				UpdateTask.update(task.getName(), "state", "finished");
 				repaint();				
 			}
 		};
@@ -285,6 +302,7 @@ public class SampleView extends ViewPart {
 					Task task = (Task)is.getFirstElement();
 					task.setCategory("debug");
 					repaint();
+					UpdateTask.update(task.getName(), "category", "debug");
 			}
 		};
 		debugAction.setText("Debug");
@@ -297,6 +315,7 @@ public class SampleView extends ViewPart {
 					Task task = (Task)is.getFirstElement();
 					task.setCategory("new feature");
 					repaint();
+					UpdateTask.update(task.getName(), "category", "new feature");
 			}
 		};
 		newFeatureAction.setText("New feature");
@@ -309,6 +328,7 @@ public class SampleView extends ViewPart {
 					Task task = (Task)is.getFirstElement();
 					task.setCategory("refactor");
 					repaint();
+					UpdateTask.update(task.getName(), "category", "refactor");
 			}
 		};
 		refactorAction.setText("Refactor");
@@ -319,7 +339,7 @@ public class SampleView extends ViewPart {
 			public void run() {
 				IStructuredSelection is = tv.getStructuredSelection();
 				Node relatedClass = (Node)is.getFirstElement();
-				//if(relatedClass.getType.equals("class")){
+				if(relatedClass.getType().equals("class")){
 					String fName = relatedClass.getName();
 					
 					IWorkbenchPage wbPage = PlatformUI.getWorkbench()  
@@ -342,12 +362,11 @@ public class SampleView extends ViewPart {
 			            } catch (PartInitException e) {  
 			                e.printStackTrace();  
 			            }   
-				//}
+				}
 					}
 			}
 		};
 	}
-	
 	public void setFocus() {
 		// TODO Auto-generated method stub
 	}
@@ -359,12 +378,12 @@ public class SampleView extends ViewPart {
 		IWorkbenchPage page = window.getActivePage();
 		IEditorPart part = page.getActiveEditor(); 
 		IEditorInput input = part.getEditorInput();
-		System.out.println("The actived class name: " + input.getName());
 		String path = ((IFileEditorInput)input).getFile().getFullPath().toString();
-		System.out.println("The actived class path: " + path);
     //TODO Add the related class to the actived task's related list
-		System.out.println("added!  " + TaskList.activatedTask.addRelatedClass(path)); 
+		TaskList.activatedTask.addRelatedClass(path);
+		UpdateTask.addRelatedClass(path, TaskList.activatedTask.getName());
 	} 
+	
 	public static void repaint() {
 		Display.getDefault().syncExec(new Runnable() {
 		    public void run() {

@@ -1,12 +1,13 @@
 package littlemylyn.entity;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
     private String name ;
     private Node parent ;
-    private ArrayList<Node> children = new ArrayList<Node>();
-    private boolean isClass = false;
+    private ArrayList<Node> children = new ArrayList<Node>();   
+    private String type;
 
     Node() {}  
 
@@ -22,7 +23,7 @@ public class Node {
        this . name = name;
     } 
 
-    public Node getParent() {
+	public Node getParent() {
        return parent ;
     }
 
@@ -43,14 +44,11 @@ public class Node {
        return children;
     }
 
-	public boolean isClass() {
-		return isClass;
+    public String getType() {
+		return type;
 	}
 
-	public void setClass(boolean isClass) {
-		this.isClass = isClass;
+	public void setType(String type) {
+		this.type = type;
 	}
-    
-    
-
 }
