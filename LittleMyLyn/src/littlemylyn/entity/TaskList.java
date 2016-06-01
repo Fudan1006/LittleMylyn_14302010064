@@ -24,6 +24,9 @@ public class TaskList extends Node {
 	}
 
 	public static void initTaskList() {
+		if(root != null){
+			return;
+		}
 		ArrayList<Task> tl = Initialize.load();
 		System.out.println("in init" + tl);
 		for (int i = 0; i < tl.size(); i++) {
