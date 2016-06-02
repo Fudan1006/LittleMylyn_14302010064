@@ -52,6 +52,13 @@ public class NewTaskFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				String name = jtfName.getText();
+				if(AddTask.checkDupilcate(name) == false){
+					JOptionPane.showMessageDialog(null,
+							"The task name is duplicate.",
+							"New task error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 				String cate = category[jcbCategory.getSelectedIndex()];
 				String state = states[jcbState.getSelectedIndex()];
 				Task task = new Task(name, state, cate);
@@ -65,7 +72,7 @@ public class NewTaskFrame extends JFrame {
 								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-				}				
+				}
 				TaskList.getTaskList().addChild(task);	
 				SampleView.repaint();
 				AddTask.add(task);

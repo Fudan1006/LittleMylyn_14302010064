@@ -34,9 +34,6 @@ public class UpdateTask {
 					}
 				}
 				String related = old + " " + filepath;
-				if(old.equals(" ")){
-					related = filepath;
-				}
 				sql = "update `tasklist` set `relatedclass`='" + related + "' where `name`='" + name + "'";
 				stm.execute(sql);
 			}

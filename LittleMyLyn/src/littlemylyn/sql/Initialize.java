@@ -31,7 +31,7 @@ public class Initialize {
 				if (file.contains(" ")) {
 					String[] filepath = file.split(" ");
 					for (int i = 0; i < filepath.length; i++){
-						if(!filepath[i].equals(""))
+						if(!filepath[i].equals("null"))
 						task.initRelatedClass(filepath[i]);
 					}
 				}

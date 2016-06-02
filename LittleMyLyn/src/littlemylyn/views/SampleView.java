@@ -1,10 +1,9 @@
 package littlemylyn.views;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.swing.JOptionPane;
+
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -12,21 +11,12 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -194,7 +184,7 @@ public class SampleView extends ViewPart {
 
 	private void fillContextMenu(IMenuManager manager) {
 		IStructuredSelection is = tv.getStructuredSelection();
-		if (!(is.getFirstElement() instanceof Task)){
+		if (!(is.getFirstElement() instanceof Task)) {
 			return;
 		}
 		manager.add(recordRelatedClassAction);
@@ -212,7 +202,7 @@ public class SampleView extends ViewPart {
 			public void menuAboutToShow(IMenuManager arg0) {
 				// TODO Auto-generated method stub
 				IStructuredSelection is = tv.getStructuredSelection();
-				if (!(is.getFirstElement() instanceof Task)){
+				if (!(is.getFirstElement() instanceof Task)) {
 					return;
 				}
 				Task task = (Task) is.getFirstElement();
@@ -220,19 +210,19 @@ public class SampleView extends ViewPart {
 				if (task.getState().getName().equals("activated")) {
 					deactivateAction.setEnabled(true);
 					activateAction.setEnabled(false);
-					//manager.add(deactivateAction);
+					// manager.add(deactivateAction);
 				} else if (task.getState().getName().equals("finished")) {
 					deactivateAction.setEnabled(false);
 					activateAction.setEnabled(true);
-					//manager.add(activateAction);
+					// manager.add(activateAction);
 				} else if (task.getState().getName().equals("new")) {
 					deactivateAction.setEnabled(true);
 					activateAction.setEnabled(true);
-					//manager.add(activateAction);
-					//manager.add(deactivateAction);
+					// manager.add(activateAction);
+					// manager.add(deactivateAction);
 				}
-				//if (!TaskList.activatedTask.equals(TaskList.nullTask))
-					//manager.add(deactivateAction);
+				// if (!TaskList.activatedTask.equals(TaskList.nullTask))
+				// manager.add(deactivateAction);
 			}
 
 		});
@@ -274,8 +264,9 @@ public class SampleView extends ViewPart {
 							tv.setExpandedState(property, true);
 					}
 				} else {
-//					System.out.println("Activate error");
-					 JOptionPane.showMessageDialog(null,"You must deactivate all the other activated tasksfirst.", "Activate error",JOptionPane.ERROR_MESSAGE);
+					// System.out.println("Activate error");
+					JOptionPane.showMessageDialog(null, "You must deactivate all the other activated tasksfirst.",
+							"Activate error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		};
@@ -370,13 +361,22 @@ public class SampleView extends ViewPart {
 						for (int i = 2; i < stringArray.length; i++) {
 							fName += "/" + stringArray[i];
 						}
-						IFile file = ResourcesPlugin.getWorkspace().getRoot().getProject(prjName).getFile(fName);
 						try {
-							if (file != null) {
-								IDE.openEditor(wbPage, file);
+							IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(prjName);
+							if (prj != null) {
+								IFile file = prj.getFile(fName);
+								if (file != null) {
+									try {
+										IDE.openEditor(wbPage, file);
+									} catch (PartInitException e) {
+										JOptionPane.showMessageDialog(null, "The file is not exist.", "open error",
+												JOptionPane.ERROR_MESSAGE);
+									}
+								}
 							}
-						} catch (PartInitException e) {
-							//System.out.println("There is no such file");
+						} catch (java.lang.IllegalArgumentException e) {
+							JOptionPane.showMessageDialog(null, "The file is not exist.", "open error",
+									JOptionPane.ERROR_MESSAGE);
 						}
 					}
 				}
