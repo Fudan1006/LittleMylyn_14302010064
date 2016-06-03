@@ -187,7 +187,6 @@ public class SampleView extends ViewPart {
 		if (!(is.getFirstElement() instanceof Task)) {
 			return;
 		}
-		manager.add(recordRelatedClassAction);
 		MenuManager menuMgr = new MenuManager("Set category");
 		menuMgr.add(debugAction);
 		menuMgr.add(newFeatureAction);
@@ -205,8 +204,7 @@ public class SampleView extends ViewPart {
 				if (!(is.getFirstElement() instanceof Task)) {
 					return;
 				}
-				Task task = (Task) is.getFirstElement();
-				System.out.println(task.getState().getName());
+				Task task = (Task) is.getFirstElement(); 
 				if (task.getState().getName().equals("activated")) {
 					deactivateAction.setEnabled(true);
 					activateAction.setEnabled(false);
@@ -231,6 +229,7 @@ public class SampleView extends ViewPart {
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
+		manager.add(recordRelatedClassAction);
 		manager.add(newTaskAction);
 	}
 
@@ -389,6 +388,11 @@ public class SampleView extends ViewPart {
 	}
 
 	public void recordRelatedClass() {
+		if(TaskList.activatedTask.equals(TaskList.nullTask)){
+			JOptionPane.showMessageDialog(null, "There is no activated task.", "record class error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		// Get the active class and record to a txt file
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
